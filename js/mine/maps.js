@@ -8,16 +8,18 @@ function initMap()
         getLocation();
     else  // does not work in http
     {
-        var towsonu = new google.maps.LatLng(39.3938317, -76.6074833);
-        mycoords = [39.3938317, -76.6074833]
+        console.log("Geolocation is not supported in http.");
+        generateMapWithCoords(39.3938317, -76.6074833);
+        // var towsonu = new google.maps.LatLng(39.3938317, -76.6074833);
+        // mycoords = [39.3938317, -76.6074833];
 
-        var mapOptions = {
-            center: towsonu,
-            zoom: 12,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
+        // var mapOptions = {
+        //     center: towsonu,
+        //     zoom: 12,
+        //     mapTypeId: google.maps.MapTypeId.ROADMAP
+        // };
         
-        map = new google.maps.Map(document.getElementById("map"), mapOptions); 
+        // map = new google.maps.Map(document.getElementById("map"), mapOptions); 
     }
 }
 
@@ -27,17 +29,33 @@ function getLocation()
     {    
         navigator.geolocation.getCurrentPosition(showPosition);
     }
-    else
-        console.log("Geolocation is not supported by this browser.");
+    else{
+        var ipaddr = request.connection.remoteAddress;
+        $.ajax({
+            url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCQUvuEdmTO1JRZWHILlN2hbWuCJ8PyrN8",
+            method: "POST",
+            data: {considerIp: true}
+        }).done(function(data){
+            if(data["location"]){
+                generateMapWithCoords(data["location"]["lat"], data["location"]["lng"]);
+            }else{
+                console.log("Geolocation is not supported by this browser.");
+            }
+        });
+    }
 }
 
 function showPosition(position) 
 {
     var lat = position.coords.latitude;
     var long = position.coords.longitude;
-    mycoords = [lat, long]
+    generateMapWithCoords(lat, long);
+}
 
-    var mycenter = new google.maps.LatLng(lat, long);
+function generateMapWithCoords(lat, lon){
+    mycoords = [lat, lon];
+
+    var mycenter = new google.maps.LatLng(lat, lon);
 
     var mapOptions = {
         center: mycenter,
@@ -52,11 +70,10 @@ function showPosition(position)
     var meSpot = {
         name: "me",
         lat: lat,
-        lon: long, 
-        loc: "(" + lat + ", " + long + ")"
+        lon: lon, 
+        loc: "(" + lat + ", " + lon + ")"
     };
     addMarker(meSpot, me);
-
 }
 
 
