@@ -1,6 +1,9 @@
  - Put nearby markers in array
  - Add more nearby search parameters
+    I have some drawing stuff that I wrote a while ago. will bring it saturday
  - Add lat, long, userid to favorites table
  - Add favid to users table
  - Figure out how best to pass passwords between pages
+    see https://www.npmjs.com/package/cookies
  - Deny location access make it still work
+    needs testing
